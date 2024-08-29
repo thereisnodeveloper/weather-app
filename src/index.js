@@ -4,8 +4,8 @@
 // #region required-template
 import './reset.css';
 import './style.css';
-// [ ]TODO: fetch API
-// [ ]TODO: process json
+// [x]TODO: fetch API
+// [x]TODO: process json
 // [ ]TODO: input form (location)
 // [ ]TODO: error handling
 
@@ -42,10 +42,6 @@ function handleError(unsafeFunction) {
 const getWeatherSafe = handleError(getWeather);
 const weatherData = await getWeatherSafe();
 
-// function processWeatherObject(weatherObject_) {}
-
-// const destructureWeatherObject = ({ address, description }) => ({ address, description });
-
 function extractWeatherData({ alerts, address, description, currentConditions, days }) {
   return {
     alerts,
@@ -56,7 +52,20 @@ function extractWeatherData({ alerts, address, description, currentConditions, d
   };
 }
 const weatherDataFiltered = extractWeatherData(weatherData);
-const targetWeatherFields = ['temp', 'feelslike', 'humidity'];
+const targetWeatherFields = [
+  'conditions',
+  'temp',
+  'feelslike',
+  'humidity',
+  'precip',
+  'precipprob',
+  'preciptype',
+  'snow',
+  'snowdepth',
+  'uvindex',
+  'icon'
+]
+console.log(weatherDataFiltered.currentConditions);
 
 function filterByDesiredFields(targetObject, selectedFields) {
   return Object.entries(targetObject).filter(([key, value]) => selectedFields.includes(key));
@@ -68,3 +77,4 @@ const weatherTodayFiltered = filterByDesiredFields(
 const weather15DaysFiltered = weatherDataFiltered.days.map((day) =>
   filterByDesiredFields(day, targetWeatherFields)
 );
+
