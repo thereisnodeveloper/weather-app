@@ -40,20 +40,31 @@ function handleError(unsafeFunction) {
 }
 
 const getWeatherSafe = handleError(getWeather);
-const weatherObject = await getWeatherSafe();
-console.log('weatherObj:', weatherObject);
+const weatherData = await getWeatherSafe();
 
 // function processWeatherObject(weatherObject_) {}
 
 // const destructureWeatherObject = ({ address, description }) => ({ address, description });
 
-function destructureWeatherObject({ address, description, currentConditions, days }) {
-  return { address, description, currentConditions, days };
+function extractWeatherData({ alerts, address, description, currentConditions, days }) {
+  return {
+    alerts,
+    address,
+    description,
+    currentConditions,
+    days,
+  };
 }
-const weatherObjectFiltered = destructureWeatherObject(weatherObject);
-const desiredWeatherInfo = ['temp', 'feelslike', 'humidity'];
-const wantedInfo = Object.entries(weatherObjectFiltered.currentConditions).filter(([key, value]) =>
-  desiredWeatherInfo.includes(key)
-);
+const weatherDataFiltered = extractWeatherData(weatherData);
+const targetWeatherFields = ['temp', 'feelslike', 'humidity'];
 
-console.log('wantedInfo:', wantedInfo)
+function filterByDesiredFields(targetObject, selectedFields) {
+  return Object.entries(targetObject).filter(([key, value]) => selectedFields.includes(key));
+}
+const weatherTodayFiltered = filterByDesiredFields(
+  weatherDataFiltered.currentConditions,
+  targetWeatherFields
+);
+const weather15DaysFiltered = weatherDataFiltered.days.map((day) =>
+  filterByDesiredFields(day, targetWeatherFields)
+);
