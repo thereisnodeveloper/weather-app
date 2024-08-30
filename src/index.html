@@ -6,9 +6,36 @@
     <title>Document</title>
   </head>
   <body>
-<!-- [ ]TODO: grid setup  -->
-<!-- [ ]TODO: search bar -->
-<!-- [ ]TODO: today container -->
-<!-- [ ]TODO: 10 day forecast -->
+    <!-- [ ]TODO: grid setup  -->
+    <!-- [ ]TODO: search bar -->
+    <!-- [ ]TODO: today container -->
+    <!-- [ ]TODO: 10 day forecast -->
+    <div class="container">
+      <form action="">
+        <label for="city" aria-required="true"
+          ><input type="search" name="city" id="city" placeholder="Enter closest city"
+        /></label>
+      </form>
+
+    <div>
+      <span>Weather Today</span>
+      <section class="weather-today">
+        <div class="icon">icon</div>
+        <div class="alerts">alerts</div>
+        <div class="day-temp">day temp</div>
+        <div class="uv">uv index</div>
+        <div class="feels-like">feels like</div>
+        <div class="humidity">humidity</div>
+        <div class="rain">rain</div>
+        <div class="snow">snow</div>
+      </section>
+    </div>
+
+    <div>
+      <span>10-day Forecast</span>
+      <section class="weather-10day"></section>
+    </div>
+  </div>
+
   </body>
 </html>
