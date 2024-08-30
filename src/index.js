@@ -16,15 +16,22 @@ const testElement = document.createElement('div');
 // #endregion
 
 // DOM elements
-const domInputs = document.querySelectorAll('input');
 /** @type {Array.<HTMLInputElement>} */
-const [passwordOriginal = document.querySelector('input#password')] = [];
+const [form = document.querySelector('form'), searchBar = document.querySelector('input')] = [];
+
+// get city from input
+function getCityfromInput(event_) {
+  event_.preventDefault();
+  const cityURL = encodeURIComponent(searchBar.value);
+  console.log('cityURL:', cityURL);
+  getWeatherForCity(cityURL);
+}
+form.addEventListener('submit', getCityfromInput);
+console.log(form);
 
 // API functions
-const apiString =
-  'https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/New%20York?unitGroup=us&key=DZE4DLL8Y94HFL5G8DRAWPKgg&contentType=json';
 
-async function getWeather() {
+async function fetchWeather(apiString) {
   const response = await fetch(apiString, { mode: 'cors' });
   const responseJSON = await response.json();
   return responseJSON;
@@ -39,42 +46,47 @@ function handleError(unsafeFunction) {
   };
 }
 
-const getWeatherSafe = handleError(getWeather);
-const weatherData = await getWeatherSafe();
-
-function extractWeatherData({ alerts, address, description, currentConditions, days }) {
-  return {
-    alerts,
-    address,
-    description,
-    currentConditions,
-    days,
-  };
+async function getWeatherForCity(cityURL) {
+  const apiString = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${cityURL}?unitGroup=us&key=DZE4DLL8Y94HFL5G8DRAWPKgg&contentType=json`;
+  const getWeatherSafe = handleError(fetchWeather.bind(this, apiString));
+  const weatherData = await getWeatherSafe();
+  console.log('weatherData:', weatherData)
 }
-const weatherDataFiltered = extractWeatherData(weatherData);
-const targetWeatherFields = [
-  'conditions',
-  'temp',
-  'feelslike',
-  'humidity',
-  'precip',
-  'precipprob',
-  'preciptype',
-  'snow',
-  'snowdepth',
-  'uvindex',
-  'icon'
-]
-console.log(weatherDataFiltered.currentConditions);
 
-function filterByDesiredFields(targetObject, selectedFields) {
-  return Object.entries(targetObject).filter(([key, value]) => selectedFields.includes(key));
+function processWeatherData() {
+  function extractWeatherData({ alerts, address, description, currentConditions, days }) {
+    return {
+      alerts,
+      address,
+      description,
+      currentConditions,
+      days,
+    };
+  }
+
+  const weatherDataFiltered = extractWeatherData(weatherData);
+  const targetWeatherFields = [
+    'conditions',
+    'temp',
+    'feelslike',
+    'humidity',
+    'precip',
+    'precipprob',
+    'preciptype',
+    'snow',
+    'snowdepth',
+    'uvindex',
+    'icon',
+  ];
+
+  function filterByDesiredFields(targetObject, selectedFields) {
+    return Object.entries(targetObject).filter(([key, value]) => selectedFields.includes(key));
+  }
+  const weatherTodayFiltered = filterByDesiredFields(
+    weatherDataFiltered.currentConditions,
+    targetWeatherFields
+  );
+  const weather15DaysFiltered = weatherDataFiltered.days.map((day) =>
+    filterByDesiredFields(day, targetWeatherFields)
+  );
 }
-const weatherTodayFiltered = filterByDesiredFields(
-  weatherDataFiltered.currentConditions,
-  targetWeatherFields
-);
-const weather15DaysFiltered = weatherDataFiltered.days.map((day) =>
-  filterByDesiredFields(day, targetWeatherFields)
-);
-

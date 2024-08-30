@@ -53,3 +53,8 @@ form{
   grid-row: 2/3;
   min-height: 300px;
 }
+
+input{
+  font-size: larger;
+  min-width: 30vw
+}
